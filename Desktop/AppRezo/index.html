@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="rampng">
+
+  <title>Horarios de Rezo</title>
+  <style>
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('img1.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -1;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 500px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      backdrop-filter: blur(5px);
+      margin: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .mosque-logo {
+      width: 40px;
+      height: 40px;
+    }
+    
+    .temperature {
+      font-size: 1.8rem;
+      font-weight: 500;
+    }
+    
+    h1 {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 0;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+      flex-grow: 1;
+      text-align: center;
+    }
+    
+    .current-time {
+      font-size: 4rem;
+      font-weight: 700;
+      color: white;
+      margin: 15px 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .date-hijri {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: white;
+    }
+    
+    .next-prayer {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      margin: 15px 0;
+      font-size: 1.3rem;
+    }
+    
+    .prayer-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      margin-top: 20px;
+    }
+    
+    .prayer-item {
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      padding: 15px 5px;
+      transition: all 0.3s ease;
+    }
+    
+    .prayer-item.active {
+      background-color: rgba(77, 237, 245, 0.7);
+    }
+    
+    .prayer-name {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    
+    .prayer-time {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    
+    .prayer-countdown {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .search-box {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    input {
+      padding: 12px 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      font-size: 1rem;
+      width: 65%;
+      outline: none;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+    
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    input:focus {
+      border-color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    button {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    button:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    
+    .status-text {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        width: 95%;
+        padding: 20px 15px;
+      }
+      
+      .current-time {
+        font-size: 3rem;
+      }
+      
+      .date-hijri {
+        font-size: 1.2rem;
+      }
+      
+      .prayer-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 3px;
+      }
+      
+      .prayer-name {
+        font-size: 0.9rem;
+      }
+      
+      .prayer-time {
+        font-size: 1.2rem;
+      }
+      
+      .prayer-countdown {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="rezo.png" alt="Logo Mezquita" class="mosque-logo">
+      <h1>MANRESA</h1>
+      <div class="temperature"><i class="fas fa-temperature-half"></i> 17°C</div>
+    </div>
+    
+    <div class="current-time" id="current-time">21:34:12</div>
+    <div class="date-hijri" id="date-hijri">27 Shawwāl 1446</div>
+    
+    <div class="next-prayer" id="next-prayer">
+      <i class="fas fa-mosque"></i> Isha en 00:45 <i class="fas fa-mosque"></i>
+    </div>
+    
+    <div class="search-box">
+      <input type="text" id="ciudad" placeholder="Ciudad" value="Manresa" />
+      <button onclick="cargarHorarios()">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    
+    <div class="prayer-grid">
+      <div class="prayer-item">
+        <div class="prayer-name">Fajr</div>
+        <div class="prayer-time">05:13</div>
+        <div class="prayer-countdown">+30</div>
+      </div>
+      <div class="prayer-item">
+        <div class="prayer-name">Duhr</div>
+        <div class="prayer-time">13:51</div>
+        <div class="prayer-countdown">+10</div>
+      </div>
+      <div class="prayer-item">
+        <div class="prayer-name">Asr</div>
+        <div class="prayer-time">17:40</div>
+        <div class="prayer-countdown">+10</div>
+      </div>
+      <div class="prayer-item">
+        <div class="prayer-name">Maghrib</div>
+        <div class="prayer-time">20:45</div>
+        <div class="prayer-countdown">+7</div>
+      </div>
+      <div class="prayer-item active">
+        <div class="prayer-name">Isha</div>
+        <div class="prayer-time">22:20</div>
+        <div class="prayer-countdown">+0</div>
+      </div>
+    </div>
+    
+    <div style="margin-top: 15px;">
+     
+     
+    </div>
+  </div>
+
+  <script>
+    // Actualizar hora actual
+    function actualizarHora() {
+      const ahora = new Date();
+      const horas = String(ahora.getHours()).padStart(2, '0');
+      const minutos = String(ahora.getMinutes()).padStart(2, '0');
+      const segundos = String(ahora.getSeconds()).padStart(2, '0');
+      document.getElementById('current-time').textContent = `${horas}:${minutos}:${segundos}`;
+    }
+    
+    // Actualizar cada segundo
+    setInterval(actualizarHora, 1000);
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      actualizarHora();
+      
+      // Permitir enviar búsqueda con Enter
+      document.getElementById('ciudad').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          cargarHorarios();
+        }
+      });
+    });
+
+    async function cargarHorarios() {
+      const ciudad = document.getElementById('ciudad').value.trim();
+      
+      if (!ciudad) {
+        alert('Por favor ingresa una ciudad.');
+        return;
+      }
+
+      try {
+        const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(ciudad)}&country=Spain&method=3`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (!data.data || !data.data.timings) {
+          throw new Error('Datos no disponibles');
+        }
+        
+        const timings = data.data.timings;
+        const hijriDate = data.data.date.hijri;
+        
+        // Actualizar nombre de ciudad y fecha
+        document.querySelector('h1').textContent = `${ciudad.toUpperCase()}`;
+        document.getElementById('date-hijri').textContent = `${hijriDate.day} ${hijriDate.month.en} ${hijriDate.year}`;
+        
+        // Actualizar horarios de oración
+        const prayerItems = document.querySelectorAll('.prayer-item');
+        const prayerNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+        
+        prayerNames.forEach((prayer, index) => {
+          const time = timings[prayer];
+          prayerItems[index].querySelector('.prayer-time').textContent = time;
+        });
+        
+        // Determinar próxima oración
+        const ahora = new Date();
+        const horaActual = ahora.getHours() * 60 + ahora.getMinutes();
+        
+        let proximaOracion = "";
+        let tiempoRestante = 24 * 60; // Inicializar con el máximo (24 horas)
+        
+        prayerNames.forEach(prayer => {
+          const [hour, minute] = timings[prayer].split(':').map(Number);
+          const prayerTime = hour * 60 + minute;
+          
+          let diff = prayerTime - horaActual;
+          if (diff < 0) diff += 24 * 60; // Si ya pasó, sumar un día
+          
+          if (diff < tiempoRestante) {
+            tiempoRestante = diff;
+            proximaOracion = prayer;
+          }
+        });
+        
+        // Actualizar próxima oración
+        const horasRestantes = Math.floor(tiempoRestante / 60);
+        const minutosRestantes = tiempoRestante % 60;
+        document.getElementById('next-prayer').innerHTML = 
+          `<i class="fas fa-mosque"></i> ${proximaOracion} en ${String(horasRestantes).padStart(2, '0')}:${String(minutosRestantes).padStart(2, '0')} <i class="fas fa-mosque"></i>`;
+        
+        // Actualizar clase activa
+        prayerItems.forEach((item, index) => {
+          if (prayerNames[index] === proximaOracion) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+        
+      } catch (error) {
+        alert('Error obteniendo los horarios. Verifica que la ciudad existe.');
+      }
+    }
+  </script>
+</body>
+</html>
